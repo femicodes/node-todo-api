@@ -25,6 +25,8 @@ app.listen(9000, () => {
     console.log('Started on port 9000');
 });
 
+module.exports = {app};
+
 
 /* let nextTodo = new Todo ({
     text: 'Finish node course',

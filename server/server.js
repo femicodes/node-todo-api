@@ -4,6 +4,7 @@ let bodyParser = require('body-parser');
 let {mongoose} = require('./db/mongoose');
 let {Todo} = require('./models/todo');
 let {User} = require('./models/user');
+let {ObjectID} = require('mongodb');
 
 let app = express();
 
@@ -18,7 +19,7 @@ app.post('/todos', (req, res) => {
         res.send(doc);
     }, e => {
         res.status(400).send(e);
-    })
+    });
 });
 
 app.get('/todos', (req, res) => {
@@ -26,8 +27,27 @@ app.get('/todos', (req, res) => {
         res.send({todos})
     }, e => {
         res.status(400).send(e);
+    });
+});
+
+app.get('/todos/:id', (req, res) => {
+    let id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Todo.findById(id).then((todo) => {
+        if (!todo) {
+            res.status(404).send();
+        }
+
+        res.send({todo});
+
+    }).catch(err => {
+        res.status(400).send();
     })
-})
+});
 
 app.listen(9000, () => {
     console.log('Started on port 9000');
